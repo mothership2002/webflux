@@ -3,27 +3,36 @@ package hyun.webflux.controller;
 import hyun.webflux.service.HelloService;
 import hyun.webflux.vo.Hello;
 import lombok.RequiredArgsConstructor;
-import org.springframework.util.ObjectUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
-import java.util.Objects;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class HelloController {
 
     private final HelloService helloService;
 
     @GetMapping("/hello/{name}")
-    public Mono<String> hello(@PathVariable String name) {
+    public Mono<String> hello(@PathVariable String name, ServerHttpRequest req) {
+//        Class<? extends ServerHttpRequest> aClass = req.getClass();
+//        System.out.println(req.getClass());
+//        System.out.println("=======================================");
+//        Arrays.stream(aClass.getDeclaredFields()).forEach(System.out::println);
+//        System.out.println("=======================================");
+//        Arrays.stream(aClass.getDeclaredMethods()).forEach(System.out::println);
         Hello hello = new Hello("Hello", name);
         return Mono.just(hello.getMessage() + " !, " + hello.getName());
     }
@@ -53,4 +62,14 @@ public class HelloController {
                 .onErrorReturn("error");
     }
 
+    @GetMapping("/thread")
+    public Mono<String> checkThread() {
+        getThread();
+        return Mono.fromCallable(helloService::hello)
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    private void getThread() {
+        log.info("Thread : {}", Thread.currentThread().getName());
+    }
 }
