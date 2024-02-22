@@ -1,5 +1,6 @@
 package hyun.webflux.controller;
 
+import hyun.webflux.CommonMethod;
 import hyun.webflux.service.HelloService;
 import hyun.webflux.vo.Hello;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+
+import static hyun.webflux.CommonMethod.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -90,7 +93,5 @@ public class HelloController {
 //        return Flux.fromIterable(helloService::iteratorParallel);
 //    }
 
-    private void getThread() {
-        log.info("Thread : {}", Thread.currentThread().getName());
-    }
+
 }

@@ -10,6 +10,12 @@ public class HelloService {
     private static final String COLON = " : ";
     private static final String LINE_BREAK = "\n";
 
+    private static boolean isPrime(int number) {
+        return number > 1
+                && IntStream.range(2, (int) Math.sqrt(number) + 1)
+                .noneMatch(i -> number % i == 0);
+    }
+
     public Long streamingError(Long seq, Boolean errorFlag, Long count) {
         if (errorFlag && (count / 2) == seq) {
             throw new RuntimeException();
@@ -41,6 +47,30 @@ public class HelloService {
                 .iterator();
     }
 
+    public Iterator<String> primeIterator() {
+        long count = IntStream.range(1, 10_000_000)
+                .filter(HelloService::isPrime)
+                .count();
+
+        return IntStream.range(0, (int) count)
+                .mapToObj(String::valueOf)
+                .toList()
+                .iterator();
+    }
+
+    public Iterator<String> primeIteratorParallel() {
+        long count = IntStream.range(1, 10_000_000)
+                .parallel()
+                .filter(HelloService::isPrime)
+                .count();
+
+        return IntStream.range(0, (int) count)
+                .mapToObj(String::valueOf)
+                .toList()
+                .iterator();
+    }
+
+
 
     private String getColonAndLineBreak(String num, String threadName) {
         return num + COLON + threadName + LINE_BREAK;
@@ -49,5 +79,6 @@ public class HelloService {
     private String getColonAndLineBreak(String num) {
         return num + LINE_BREAK;
     }
+
 }
 
