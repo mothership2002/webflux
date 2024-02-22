@@ -48,7 +48,7 @@ public class HelloService {
     }
 
     public Iterator<String> primeIterator() {
-        long count = IntStream.range(1, 10_000_000)
+        long count = IntStream.range(1, 1_000_000)
                 .filter(HelloService::isPrime)
                 .count();
 
@@ -59,7 +59,7 @@ public class HelloService {
     }
 
     public Iterator<String> primeIteratorParallel() {
-        long count = IntStream.range(1, 10_000_000)
+        long count = IntStream.range(1, 1_000_000)
                 .parallel()
                 .filter(HelloService::isPrime)
                 .count();
