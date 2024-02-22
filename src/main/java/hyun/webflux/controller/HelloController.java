@@ -27,12 +27,12 @@ public class HelloController {
 
     @GetMapping("/hello/{name}")
     public Mono<String> hello(@PathVariable String name, ServerHttpRequest req) {
-//        Class<? extends ServerHttpRequest> aClass = req.getClass();
-//        System.out.println(req.getClass());
-//        System.out.println("=======================================");
-//        Arrays.stream(aClass.getDeclaredFields()).forEach(System.out::println);
-//        System.out.println("=======================================");
-//        Arrays.stream(aClass.getDeclaredMethods()).forEach(System.out::println);
+        Class<? extends ServerHttpRequest> aClass = req.getClass();
+        System.out.println(req.getClass());
+        System.out.println("=======================================");
+        Arrays.stream(aClass.getDeclaredFields()).forEach(System.out::println);
+        System.out.println("=======================================");
+        Arrays.stream(aClass.getDeclaredMethods()).forEach(System.out::println);
         Hello hello = new Hello("Hello", name);
         return Mono.just(hello.getMessage() + " !, " + hello.getName());
     }
@@ -68,6 +68,27 @@ public class HelloController {
         return Mono.fromCallable(helloService::hello)
                 .subscribeOn(Schedulers.boundedElastic());
     }
+
+    @GetMapping("/thread/first")
+    public Mono<String> threadFirst() {
+        getThread();
+        return Mono.fromCallable(helloService::hello).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @GetMapping("/thread/second")
+    public Flux<String> threadSecond() {
+        return Flux.fromIterable(helloService::iterator);
+    }
+
+    @GetMapping("/thread/third")
+    public Flux<String> threadThird() { // 제네릭이 ? 이면 list로 리턴
+        return Flux.fromIterable(helloService::iteratorParallel);
+    }
+
+//    @GetMapping("/thread/fourth")
+//    public Flux<?> threadFourth() {
+//        return Flux.fromIterable(helloService::iteratorParallel);
+//    }
 
     private void getThread() {
         log.info("Thread : {}", Thread.currentThread().getName());
